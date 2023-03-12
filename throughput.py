@@ -42,16 +42,26 @@ def throughput_grid(tensor, nmax, Nmax, progress=True):
 if __name__ == '__main__':
     with open('stabs5_reps.pkl', 'rb') as f:
         stabs5_reps = pickle.load(f)
-        
-    tp_grids = []
-    for i in trange(len(stabs5_reps)):
-        tp_grids.append(
-            throughput_grid(stabs5_reps[i], 10, 10, progress=False))
-        
-    grids = np.unique(tp_grids, axis=0)
-    grids = grids[np.argsort(grids.sum((1,2)))]
-
+    
     n = 10
+    try:
+        with open('tp_grids_{}x{}.pkl'.format(n, n), 'rb') as f:
+            tp_grids = pickle.load(f)
+    except FileNotFoundError:
+        tp_grids = []
+        for i in trange(len(stabs5_reps)):
+            tp_grids.append(
+                throughput_grid(stabs5_reps[i], n, n, progress=False))
+        
+        now = datetime.now()
+        date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
+        fname = 'tp_grids_{}x{}_'.format(n, n) + date_time + '.pkl'
+        with open(fname, 'wb') as f:
+            pickle.dump(tp_grids, f)
+
+    grids = np.unique(tp_grids, axis=0)
+    grids = grids[np.argsort(grids[:,:6,:6].sum((1,2)))]
+
     cmap = plt.get_cmap('viridis', n+1)
     fig, ax = plt.subplots(2, 6, figsize=(12, 4))
     for i in range(12):
@@ -72,6 +82,6 @@ if __name__ == '__main__':
     cbar.set_label(r'$C(n,d)$')
 
     now = datetime.now()
-    date_time = now.strftime("%m-%d-%Y_%H:%M:%S")
-    fname = 'tp_classes_{}x{}_'.format(n) + date_time + '.png'
+    date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
+    fname = 'tp_classes_{}x{}_'.format(n, n) + date_time + '.png'
     plt.savefig(fname, dpi=150, bbox_inches='tight')
