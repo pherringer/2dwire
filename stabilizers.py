@@ -182,7 +182,7 @@ if __name__ == '__main__':
     stabs = get_stabilizer_states(5, progress=True)
 
     now = datetime.now()
-    date_time = now.strftime("%m-%d-%Y_%H:%M:%S")
+    date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
     fname = 'stabs5_' + date_time + '.pkl'
     with open(fname, 'wb') as f:
         pickle.dump(stabs, f)
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     reps, labels, classes = get_eq_classes(stabs, tensor_eq_cls_5)
 
     now = datetime.now()
-    date_time = now.strftime("%m-%d-%Y_%H:%M:%S")
+    date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
     fname_reps = 'stabs5_reps_' + date_time + '.pkl'
     fname_labels = 'stabs5_labels_' + date_time + '.pkl'
     fname_classes = 'stabs5_classes_' + date_time + '.pkl'
