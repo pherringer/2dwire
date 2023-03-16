@@ -1,6 +1,8 @@
 # Classification of measurement-based quantum wire in stabilizer PEPS
 
-Code to reproduce the numerical lemma in arXiv:2207.00616. 
+Code to reproduce the numerical lemma in arXiv:2207.00616. [![DOI](https://zenodo.org/badge/612794101.svg)](https://zenodo.org/badge/latestdoi/612794101)
+
+
 
 ## Requirements
 
