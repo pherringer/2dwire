@@ -20,6 +20,18 @@ def num_stabs(n):
     return np.prod(2**np.arange(1, n+1)+1)
 
 
+def to_tuple(arr):
+    """Convert 2D array to tuple of tuples."""
+    return tuple(map(tuple, arr))
+
+
+def to_tuple_recursive(a):
+    try:
+        return tuple(to_tuple_recursive(i) for i in a)
+    except TypeError:
+        return a
+
+
 def grow_isotropic_subspaces(subspaces, verbose=False, progress=False):
     """Takes a set of isotropic subspaces and returns the set of all
     isotropic subspaces with one more basis vector.
@@ -72,7 +84,7 @@ def grow_isotropic_subspaces(subspaces, verbose=False, progress=False):
             if verbose and i == 0 and j == 0:
                 print('V_new', V_new.shape)
             linalg.rref(V_new, in_place=True)
-            V_new_tuple = sp.to_tuple(V_new)
+            V_new_tuple = to_tuple(V_new)
             if V_new_tuple not in bigger_subspaces:
                 bigger_subspaces.add(V_new_tuple)
     return bigger_subspaces
@@ -167,13 +179,6 @@ def clifford_perms_tensor_5(tensor, physical=False):
             ))
             permuted_tensors.append(np.hstack((temp, single_legs[4])))
     return permuted_tensors
-
-
-def to_tuple_recursive(a):
-    try:
-        return tuple(to_tuple_recursive(i) for i in a)
-    except TypeError:
-        return a
 
 
 def tensor_eq_cls_4(tensor):
