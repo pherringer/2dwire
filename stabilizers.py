@@ -3,6 +3,7 @@ import itertools as it
 from tqdm import tqdm
 import pickle
 from datetime import datetime
+import os
 
 import linalg
 import symplectic as sp 
@@ -142,19 +143,29 @@ def clifford_perms_tensor_4(tensor):
     return permuted_tensors
 
 
-def clifford_perms_tensor_5(tensor):
+def clifford_perms_tensor_5(tensor, physical=False):
     single_legs = np.split(tensor, tensor.shape[1]//2, axis=1)
     permuted_tensors = []
     cliff1 = clifford_1()
-    for g, h, k in it.product(cliff1, repeat=3):
-        temp = np.hstack((
+    if physical:
+        for g, h, k in it.product(cliff1, repeat=3):
+            temp = np.hstack((
+                    (g@single_legs[0].T).T % 2,
+                    (g@single_legs[1].T).T % 2,
+                    (h@single_legs[2].T).T % 2,
+                    (h@single_legs[3].T).T % 2,
+                    (k@single_legs[4].T).T % 2,
+                ))
+            permuted_tensors.append(temp)
+    else:
+        for g, h in it.product(cliff1, repeat=2):
+            temp = np.hstack((
                 (g@single_legs[0].T).T % 2,
                 (g@single_legs[1].T).T % 2,
                 (h@single_legs[2].T).T % 2,
                 (h@single_legs[3].T).T % 2,
-                (k@single_legs[4].T).T % 2,
             ))
-        permuted_tensors.append(temp)
+            permuted_tensors.append(np.hstack((temp, single_legs[4])))
     return permuted_tensors
 
 
@@ -178,17 +189,23 @@ def tensor_eq_cls_5(tensor):
 
 
 if __name__ == '__main__':
-    print('Generating 5-qubit stabilizer states')
-    stabs = get_stabilizer_states(5, progress=True)
+    if os.path.exists('stabs5.pkl'):
+        with open('stabs5.pkl', 'rb') as f:
+            stabs = pickle.load(f)
+        print('Loaded 5-qubit stabilizer states')
+    else:
+        print('Generating 5-qubit stabilizer states')
+        stabs = get_stabilizer_states(5, progress=True)
 
-    now = datetime.now()
-    date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
-    fname = 'stabs5_' + date_time + '.pkl'
-    with open(fname, 'wb') as f:
-        pickle.dump(stabs, f)
+        now = datetime.now()
+        date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
+        fname = 'stabs5_' + date_time + '.pkl'
+        with open(fname, 'wb') as f:
+            pickle.dump(stabs, f)
 
     print('Finding equivalence classes')
-    reps, labels, classes = get_eq_classes(stabs, tensor_eq_cls_5)
+    reps, labels, classes = get_eq_classes(
+        stabs, tensor_eq_cls_5)
 
     now = datetime.now()
     date_time = now.strftime("%m.%d.%Y_%H-%M-%S")
