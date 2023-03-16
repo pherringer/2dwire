@@ -4,7 +4,7 @@ Code to reproduce the numerical lemma in arXiv:2207.00616.
 
 ## Requirements
 
-Python 3.8.5, Numpy, Scipy, Matplotlib, Numba. For a detailed list, see the included .yml file. To create an Anaconda virtual environment directly from this file, use `conda env create -n [name] --file=2dwire_env.yml`. 
+Python 3.8.5, Numpy, Scipy, Matplotlib, Numba, TQDM. For a detailed list, see the included .yml file. To create an Anaconda virtual environment directly from this file, use `conda env create -n [name] --file=2dwire_env.yml`. 
 
 ## Usage
 
